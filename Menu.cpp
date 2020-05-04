@@ -1,9 +1,10 @@
 #include <iostream>
-
+#include "Test.h"
 
 int main() {
 
-	std::cout << "hello\n";
+	Test App;
+	App.chooseTest();
 
 	return 0;
 }
