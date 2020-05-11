@@ -13,8 +13,12 @@ private:
 	std::vector<TestModel> testData;
 	void getTestData(std::string);
 	TestModel decodeQuestionString(std::string);
+	std::string encryptQuestionObject(TestModel);
 	int getNumber(int, int);
 public:
+	void createTest();
+	void startApp();
 	void chooseTest();
 	void startTest(std::string);
+	void chooseTestToErase();
 };

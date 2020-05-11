@@ -4,7 +4,7 @@
 int main() {
 
 	Test App;
-	App.chooseTest();
+	App.startApp();
 
 	return 0;
 }

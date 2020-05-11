@@ -1,16 +1,115 @@
 #include "Test.h"
 #include "TestController.h"
 
+void Test::startApp() {
+	std::cout << "1. Choose the test." << std::endl;
+	std::cout << "2. Create the test." << std::endl;
+	std::cout << "3. Erase the test." << std::endl;
+	std::cout << "4. Exit" << std::endl;
+	std::cout << "Enter number which you need to execute: ";
+	
+	int result;
+	while ((result = getNumber(1, 3)) == -1) {
+		std::cout << "Please enter the correct number: ";
+	}
+
+	switch (result) {
+		case 1: {
+			system("cls");
+			chooseTest();
+			break;
+		}
+		case 2: {
+			system("cls");
+			createTest();
+			break;
+		}
+		case 3: {
+			system("cls");
+			chooseTestToErase();
+			break;
+		}
+		default: {
+			exit(0);
+		}
+	}
+}
+
+void Test::createTest() {
+	std::string nameTest;
+	int numberQuestions;
+	std::ofstream dataTest;
+
+	std::cout << "Enter the name of your test: ";
+	std::cin >> nameTest;
+
+	TestController::addNewTest(nameTest + ".txt");
+	dataTest.open(nameTest + ".txt");
+
+	std::cout << "Enter number of questions: ";
+
+	while ((numberQuestions = getNumber(1, 100)) == -1) {
+		std::cout << "Enter correct number(1, 100): ";
+	}
+
+	dataTest << numberQuestions << std::endl;
+
+	for (int indexQuestion = 0; indexQuestion < numberQuestions; ++indexQuestion) {
+		TestModel currentQuestion;
+		int numberAnswers;
+		int numberCorrectAnswers;
+
+		std::cout << "Enter the question #" << indexQuestion + 1 << ": ";
+
+		getline(std::cin, currentQuestion.Question);
+		getline(std::cin, currentQuestion.Question);
+
+		std::cout << "Enter the number of answers: ";
+		while ((numberAnswers = getNumber(1, 100)) == -1) {
+			std::cout << "Enter the correct number(1, 100): ";
+		}
+
+		for (int indexAnswer = 0; indexAnswer < numberAnswers; ++indexAnswer) {
+			std::string answer;
+			std::cout << "Enter the " << indexAnswer + 1 << " answer: ";
+			std::cin >> answer;
+			currentQuestion.Answers.push_back(answer);
+		}
+
+		std::cout << "Enter the number of correct answers: ";
+		while ((numberCorrectAnswers = getNumber(1, numberAnswers)) == -1) {
+			std::cout << "Enter the correct number(1," << numberAnswers << "): ";
+		}
+
+		for (int indexCorrectAnswer = 0; indexCorrectAnswer < numberCorrectAnswers; ++indexCorrectAnswer) {
+			int correctAnswer;
+			std::cout << "Enter the index of correct answer: ";
+
+			while ((correctAnswer = getNumber(1, numberAnswers)) == -1) {
+				std::cout << "Enter the correct number(1," << numberAnswers << "): ";
+			}
+			
+			currentQuestion.CorrectAnswers.push_back(correctAnswer);
+		}
+
+		dataTest << encryptQuestionObject(currentQuestion) << std::endl;
+		system("cls");
+	}
+
+	this->startApp();
+}
+
 void Test::chooseTest() {
 	std::vector <std::string> tests = TestController::getTestList();
 
 	int number = 1;
 
-	std::cout << "Please choose test: " << std::endl;
-
 	for (auto item : tests) {
 		std::cout << number++ << " - " << item << std::endl;
 	}
+
+
+	std::cout << "Please choose the test: " << std::endl;
 
 	int answer;
 
@@ -38,6 +137,35 @@ int Test::getNumber(int leftBorder, int rightBorder) {
 	}
 
 	return result;
+}
+
+void Test::chooseTestToErase() {
+	std::vector <std::string> tests = TestController::getTestList();
+
+	int number = 1;
+
+	for (auto item : tests) {
+		std::cout << number++ << " - " << item << std::endl;
+	}
+
+
+	std::cout << "Please enter index of test which you need to delete, or enter 0 to back in main menu: " << std::endl;
+
+	int answer;
+
+	while ((answer = getNumber(1, tests.size())) == -1) {
+		std::cout << "Please enter the correct number: ";
+	}
+
+	if (answer == 0) {
+		system("cls");
+		this->startApp();
+		return;
+	}
+	
+	TestController::eraseTest(tests[answer - 1]);
+	system("cls");
+	this->startApp();
 }
 
 void Test::startTest(std::string filename) {
@@ -99,7 +227,7 @@ void Test::startTest(std::string filename) {
 
 	std::cout << "You passed test by " << std::fixed << std::setprecision(2) << result * 100 << "%." << std::endl;
 
-	std::cout << "Please enter 1 if you want another test, or 2 if you want to exit" << std::endl;
+	std::cout << "Please enter 1 if you want go to main menu, or 2 if you want to exit" << std::endl;
 	int resultUserAction;
 
 	while ((resultUserAction = this->getNumber(1, 2)) == -1) {
@@ -107,7 +235,7 @@ void Test::startTest(std::string filename) {
 	}
 	if (resultUserAction == 1) {
 		system("cls");
-		this->chooseTest();
+		this->startApp();
 	}
 	else {
 		exit(0);
@@ -133,6 +261,32 @@ void Test::getTestData(std::string filename) {
 	input.close();
 }
 
+
+std::string Test::encryptQuestionObject(TestModel question) {
+	std::string result;
+
+	//question
+	result += question.Question + "$";
+
+	//number answers
+	result += std::to_string(question.Answers.size()) + "$";
+
+	//answers
+	for (auto item : question.Answers) result += item + "$";
+
+	//number of correct answers
+	result += std::to_string(question.CorrectAnswers.size()) + "$";
+
+	//correct answers
+	for (auto item : question.CorrectAnswers) {
+		result += std::to_string(item) + "$";
+	}
+
+	result.erase(result.size() - 1);
+
+	return result;
+}
+
 TestModel Test::decodeQuestionString(std::string questionString) {
 
 	TestModel result;
@@ -140,22 +294,17 @@ TestModel Test::decodeQuestionString(std::string questionString) {
 	int pos = 0;
 	
 	//find question
-	//----------------------------------
 	for (auto symbol : questionString) {
 		pos++;
 		if (symbol == '$') break;
 		question += symbol;
 	}
 	result.Question = question;
-	//-----------------------------------
 
 	//find number of answers
-	//-------------------------------------
 	int numberAnswers = questionString[pos] - '0';
-	//-------------------------------------
 
 	//find answers
-	//-----------------------------------------------------
 	pos += 2;
 	for (int i = pos; i < questionString.size(); ++i) {
 		pos++;
@@ -169,16 +318,12 @@ TestModel Test::decodeQuestionString(std::string questionString) {
 			temp += questionString[i];
 		}
 	}
-	//-----------------------------------------------------
 
 	//find number of correct answers
-	//-----------------------------------------------------
 	pos++;
 	int numberCorrectAnswers = questionString[pos] - '0';
-	//-----------------------------------------------------	
 
 	//find correct answers
-	//-----------------------------------------------------
 	pos += 1;
 	for (int i = pos; i < questionString.size(); ++i) {
 		if (questionString[i] != '$') {
@@ -188,7 +333,6 @@ TestModel Test::decodeQuestionString(std::string questionString) {
 		}
 	}
 	std::sort(result.CorrectAnswers.begin(), result.CorrectAnswers.end());
-	//-----------------------------------------------------
 
 	return result;
 }
