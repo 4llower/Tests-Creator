@@ -1,5 +1,5 @@
 #include "Test.h"
-#include "TestController.h"
+#include "TestData.h"
 
 void Test::startApp() {
 	std::cout << "1. Choose the test." << std::endl;
@@ -9,7 +9,7 @@ void Test::startApp() {
 	std::cout << "Enter number which you need to execute: ";
 	
 	int result;
-	while ((result = getNumber(1, 3)) == -1) {
+	while ((result = getNumber(1, 4)) == -1) {
 		std::cout << "Please enter the correct number: ";
 	}
 
@@ -43,7 +43,7 @@ void Test::createTest() {
 	std::cout << "Enter the name of your test: ";
 	std::cin >> nameTest;
 
-	TestController::addNewTest(nameTest + ".txt");
+	TestData::addNewTest(nameTest + ".txt");
 	dataTest.open(nameTest + ".txt");
 
 	std::cout << "Enter number of questions: ";
@@ -100,7 +100,7 @@ void Test::createTest() {
 }
 
 void Test::chooseTest() {
-	std::vector <std::string> tests = TestController::getTestList();
+	std::vector <std::string> tests = TestData::getTestList();
 
 	int number = 1;
 
@@ -121,26 +121,8 @@ void Test::chooseTest() {
 	startTest(tests[answer - 1]);
 }
 
-int Test::getNumber(int leftBorder, int rightBorder) {
-	std::string current;
-	int result = -1;
-
-	std::cin >> current;
-	try {
-		result = stoi(current);
-		if (!(leftBorder <= result && result <= rightBorder)) {
-			result = -1;
-		}
-	}
-	catch (std::invalid_argument) {
-		result = -1;
-	}
-
-	return result;
-}
-
 void Test::chooseTestToErase() {
-	std::vector <std::string> tests = TestController::getTestList();
+	std::vector <std::string> tests = TestData::getTestList();
 
 	int number = 1;
 
@@ -153,7 +135,7 @@ void Test::chooseTestToErase() {
 
 	int answer;
 
-	while ((answer = getNumber(1, tests.size())) == -1) {
+	while ((answer = getNumber(0, tests.size())) == -1) {
 		std::cout << "Please enter the correct number: ";
 	}
 
@@ -163,7 +145,7 @@ void Test::chooseTestToErase() {
 		return;
 	}
 	
-	TestController::eraseTest(tests[answer - 1]);
+	TestData::eraseTest(tests[answer - 1]);
 	system("cls");
 	this->startApp();
 }
@@ -259,80 +241,4 @@ void Test::getTestData(std::string filename) {
 	}
 
 	input.close();
-}
-
-
-std::string Test::encryptQuestionObject(TestModel question) {
-	std::string result;
-
-	//question
-	result += question.Question + "$";
-
-	//number answers
-	result += std::to_string(question.Answers.size()) + "$";
-
-	//answers
-	for (auto item : question.Answers) result += item + "$";
-
-	//number of correct answers
-	result += std::to_string(question.CorrectAnswers.size()) + "$";
-
-	//correct answers
-	for (auto item : question.CorrectAnswers) {
-		result += std::to_string(item) + "$";
-	}
-
-	result.erase(result.size() - 1);
-
-	return result;
-}
-
-TestModel Test::decodeQuestionString(std::string questionString) {
-
-	TestModel result;
-	std::string question, temp;
-	int pos = 0;
-	
-	//find question
-	for (auto symbol : questionString) {
-		pos++;
-		if (symbol == '$') break;
-		question += symbol;
-	}
-	result.Question = question;
-
-	//find number of answers
-	int numberAnswers = questionString[pos] - '0';
-
-	//find answers
-	pos += 2;
-	for (int i = pos; i < questionString.size(); ++i) {
-		pos++;
-		if (questionString[i] == '$') {
-			result.Answers.push_back(temp);
-			temp.clear();
-			numberAnswers--;
-			if (numberAnswers == 0) break;
-		}
-		else {
-			temp += questionString[i];
-		}
-	}
-
-	//find number of correct answers
-	pos++;
-	int numberCorrectAnswers = questionString[pos] - '0';
-
-	//find correct answers
-	pos += 1;
-	for (int i = pos; i < questionString.size(); ++i) {
-		if (questionString[i] != '$') {
-			result.CorrectAnswers.push_back(questionString[i] - '0');
-			numberCorrectAnswers--;
-			if (numberCorrectAnswers == 0) break;
-		}
-	}
-	std::sort(result.CorrectAnswers.begin(), result.CorrectAnswers.end());
-
-	return result;
 }

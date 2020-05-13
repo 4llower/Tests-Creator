@@ -1,6 +1,6 @@
-#include "TestController.h"
+#include "TestData.h"
 
-std::vector<std::string> TestController::getTestList() {
+std::vector<std::string> TestData::getTestList() {
 	std::ifstream input;
 	input.open("AllTests.txt");
 
@@ -19,7 +19,7 @@ std::vector<std::string> TestController::getTestList() {
 	return result;
 }
 
-void TestController::addNewTest(std::string nameTest){
+void TestData::addNewTest(std::string nameTest){
 	std::vector <std::string> tests = getTestList();
 	tests.push_back(nameTest);
 
@@ -34,7 +34,7 @@ void TestController::addNewTest(std::string nameTest){
 	output.close();
 }
 
-void TestController::eraseTest(std::string nameTest) {
+void TestData::eraseTest(std::string nameTest) {
 	std::vector <std::string> tests = getTestList();
 
 	for (auto it = tests.begin(); it != tests.end(); ++it) {

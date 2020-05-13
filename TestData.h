@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 
-static class TestController
+static class TestData
 {
 public:
 	static std::vector<std::string> getTestList();
