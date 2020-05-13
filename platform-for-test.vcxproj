@@ -139,12 +139,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="TestMainFunctionality.cpp" />
     <ClCompile Include="TestData.cpp" />
     <ClCompile Include="TestDecodeOptions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Test.h" />
+    <ClInclude Include="TestMainFunctionality.h" />
     <ClInclude Include="TestData.h" />
     <ClInclude Include="TestModel.h" />
   </ItemGroup>

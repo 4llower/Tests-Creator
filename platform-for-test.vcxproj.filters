@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Test.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Menu.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -27,15 +24,18 @@
     <ClCompile Include="TestData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="TestMainFunctionality.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestModel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Test.h">
+    <ClInclude Include="TestData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="TestData.h">
+    <ClInclude Include="TestMainFunctionality.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

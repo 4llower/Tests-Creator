@@ -1,4 +1,4 @@
-#include "Test.h"
+#include "TestMainFunctionality.h"
 
 std::string Test::encryptQuestionObject(TestModel question) {
 	std::string result;
@@ -108,4 +108,39 @@ TestModel Test::decodeQuestionString(std::string questionString) {
 	std::sort(result.CorrectAnswers.begin(), result.CorrectAnswers.end());
 
 	return result;
+}
+
+void Test::fromObjectToFile(std::string filename, std::vector <TestModel> testData) {
+	std::ofstream output;
+	output.open(pathToTests + filename);
+
+	output << testData.size() << std::endl;
+
+	for (auto item : testData) {
+		output << encryptQuestionObject(item) << std::endl;
+	}
+
+	output.close();
+}
+
+std::vector<TestModel> Test::getTestData(std::string filename) {
+
+	std::vector<TestModel> testData;
+	std::string currentQuestionString;
+
+	std::ifstream input;
+	input.open(pathToTests + filename);
+
+	int query;
+	input >> query;
+	getline(input, currentQuestionString);
+
+	for (int i = 0; i < query; ++i) {
+		getline(input, currentQuestionString);
+		testData.push_back(decodeQuestionString(currentQuestionString));
+	}
+
+	input.close();
+
+	return testData;
 }

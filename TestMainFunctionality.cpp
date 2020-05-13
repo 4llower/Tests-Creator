@@ -1,4 +1,4 @@
-#include "Test.h"
+#include "TestMainFunctionality.h"
 #include "TestData.h"
 
 void Test::startApp() {
@@ -41,6 +41,44 @@ void Test::startApp() {
 	}
 }
 
+void Test::chooseTest(std::string action) {
+	std::vector <std::string> tests = TestData::getTestList();
+
+	int number = 1;
+
+	for (auto item : tests) {
+		std::cout << number++ << " - " << item << std::endl;
+	}
+
+
+	std::cout << "Please choose the test: " << std::endl;
+
+	int answer;
+
+	while ((answer = getNumber(1, tests.size())) == -1) {
+		std::cout << "Please enter the correct number: ";
+	}
+
+	system("cls");
+
+	if (action == "Start") {
+		startTest(tests[answer - 1]);
+		return;
+	}
+
+	if (action == "Delete") {
+		TestData::eraseTest(tests[answer - 1]);
+		this->startApp();
+		return;
+	}
+
+	if (action == "Edit") {
+		startEdit(tests[answer - 1]);
+		return;
+	}
+}
+
+
 void Test::createTest() {
 	std::string nameTest;
 	int numberQuestions;
@@ -67,19 +105,6 @@ void Test::createTest() {
 	}
 
 	this->startApp();
-}
-
-void Test::fromObjectToFile(std::string filename, std::vector <TestModel> testData) {
-	std::ofstream output;
-	output.open(pathToTests + filename);
-	
-	output << testData.size() << std::endl;
-	
-	for (auto item : testData) {
-		output << encryptQuestionObject(item) << std::endl;
-	}
-
-	output.close();
 }
 
 TestModel Test::getTestQuestion() {
@@ -120,43 +145,6 @@ TestModel Test::getTestQuestion() {
 	}
 
 	return result;
-}
-
-void Test::chooseTest(std::string action) {
-	std::vector <std::string> tests = TestData::getTestList();
-
-	int number = 1;
-
-	for (auto item : tests) {
-		std::cout << number++ << " - " << item << std::endl;
-	}
-
-
-	std::cout << "Please choose the test: " << std::endl;
-
-	int answer;
-
-	while ((answer = getNumber(1, tests.size())) == -1) {
-		std::cout << "Please enter the correct number: ";
-	}
-
-	system("cls");
-
-	if (action == "Start") {
-		startTest(tests[answer - 1]);
-		return;
-	}
-
-	if (action == "Delete") {
-		TestData::eraseTest(tests[answer - 1]);
-		this->startApp();
-		return;
-	}
-
-	if (action == "Edit") {
-		startEdit(tests[answer - 1]);
-		return;
-	}
 }
 
 void Test::startTest(std::string filename) {
@@ -267,27 +255,4 @@ void Test::startEdit(std::string filename) {
 	fromObjectToFile(filename, testData);
 	system("cls");
 	this->startApp();
-}
-
-
-std::vector<TestModel> Test::getTestData(std::string filename) {
-
-	std::vector<TestModel> testData;
-	std::string currentQuestionString;
-
-	std::ifstream input;
-	input.open(pathToTests + filename);
-
-	int query;
-	input >> query;
-	getline(input, currentQuestionString);
-
-	for (int i = 0; i < query; ++i) {
-		getline(input, currentQuestionString);
-		testData.push_back(decodeQuestionString(currentQuestionString));
-	}
-
-	input.close();
-
-	return testData;
 }
