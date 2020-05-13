@@ -50,7 +50,7 @@ void Test::createTest() {
 	std::cin >> nameTest;
 
 	TestData::addNewTest(nameTest + ".txt");
-	dataTest.open(nameTest + ".txt");
+	dataTest.open(pathToTests + nameTest + ".txt");
 
 	std::cout << "Enter number of questions: ";
 
@@ -71,13 +71,15 @@ void Test::createTest() {
 
 void Test::fromObjectToFile(std::string filename, std::vector <TestModel> testData) {
 	std::ofstream output;
-	output.open(filename);
+	output.open(pathToTests + filename);
 	
 	output << testData.size() << std::endl;
 	
 	for (auto item : testData) {
 		output << encryptQuestionObject(item) << std::endl;
 	}
+
+	output.close();
 }
 
 TestModel Test::getTestQuestion() {
@@ -274,7 +276,7 @@ std::vector<TestModel> Test::getTestData(std::string filename) {
 	std::string currentQuestionString;
 
 	std::ifstream input;
-	input.open(filename);
+	input.open(pathToTests + filename);
 
 	int query;
 	input >> query;

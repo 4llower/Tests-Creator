@@ -5,6 +5,7 @@
 static class TestData
 {
 public:
+	static std::string pathToTests;
 	static std::vector<std::string> getTestList();
 	static void addNewTest(std::string);
 	static void eraseTest(std::string);

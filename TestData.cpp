@@ -1,8 +1,10 @@
 #include "TestData.h"
 
+std::string TestData::pathToTests = "D:\\Projects\\platform-for-test\\Tests\\";
+
 std::vector<std::string> TestData::getTestList() {
 	std::ifstream input;
-	input.open("AllTests.txt");
+	input.open(pathToTests + "AllTests.txt");
 
 	std::vector <std::string> result;
 
@@ -24,7 +26,7 @@ void TestData::addNewTest(std::string nameTest){
 	tests.push_back(nameTest);
 
 	std::ofstream output;
-	output.open("AllTests.txt");
+	output.open(pathToTests + "AllTests.txt");
 
 	output << tests.size() << std::endl;
 	for (auto item : tests) {
@@ -45,7 +47,7 @@ void TestData::eraseTest(std::string nameTest) {
 	}
 
 	std::ofstream output;
-	output.open("AllTests.txt");
+	output.open(pathToTests + "AllTests.txt");
 
 	output << tests.size() << std::endl;
 	for (auto item : tests) {

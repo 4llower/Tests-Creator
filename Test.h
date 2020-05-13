@@ -10,6 +10,7 @@
 class Test {
 
 private:	
+	const std::string pathToTests = "D:\\Projects\\platform-for-test\\Tests\\";
 	std::vector<TestModel> getTestData(std::string);
 	TestModel decodeQuestionString(std::string);
 	std::string encryptQuestionObject(TestModel);
