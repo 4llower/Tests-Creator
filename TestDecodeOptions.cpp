@@ -1,4 +1,4 @@
-#include "TestMainFunctionality.h"
+#include "Test.h"
 
 std::string Test::encryptQuestionObject(TestModel question) {
 	std::string result;

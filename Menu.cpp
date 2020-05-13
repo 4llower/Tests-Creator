@@ -1,5 +1,5 @@
 #include <iostream>
-#include "TestMainFunctionality.h"
+#include "Test.h"
 
 int main() {
 

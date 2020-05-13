@@ -144,7 +144,7 @@
     <ClCompile Include="TestDecodeOptions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestMainFunctionality.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="TestData.h" />
     <ClInclude Include="TestModel.h" />
   </ItemGroup>

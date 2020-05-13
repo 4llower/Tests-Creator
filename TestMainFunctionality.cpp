@@ -1,4 +1,4 @@
-#include "TestMainFunctionality.h"
+#include "Test.h"
 #include "TestData.h"
 
 void Test::startApp() {
@@ -85,7 +85,12 @@ void Test::createTest() {
 	std::ofstream dataTest;
 
 	std::cout << "Enter the name of your test: ";
-	std::cin >> nameTest;
+	getline(std::cin, nameTest);
+	getline(std::cin, nameTest);
+
+	for (auto& i : nameTest) {
+		if (i == ' ') i = '_';
+	}
 
 	TestData::addNewTest(nameTest + ".txt");
 	dataTest.open(pathToTests + nameTest + ".txt");
@@ -109,6 +114,7 @@ void Test::createTest() {
 
 TestModel Test::getTestQuestion() {
 	TestModel result;
+	std::string temp;
 	
 	int numberAnswers;
 	int numberCorrectAnswers;
@@ -121,10 +127,12 @@ TestModel Test::getTestQuestion() {
 		std::cout << "Enter the correct number(1, 100): ";
 	}
 
+	getline(std::cin, temp);
+
 	for (int indexAnswer = 0; indexAnswer < numberAnswers; ++indexAnswer) {
 		std::string answer;
 		std::cout << "Enter the " << indexAnswer + 1 << " answer: ";
-		std::cin >> answer;
+		getline(std::cin, answer);
 		result.Answers.push_back(answer);
 	}
 
