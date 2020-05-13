@@ -1,4 +1,4 @@
 3
-Do you have a laptop$4$yes$no$what the laptop$i don'know$2$1$2
-Do you have a laptop$4$yes$no$what the laptop$i don'know$1$1$
+da$1$da$1$1
+hello$2$hello$no$2$1$2
 Do you have a laptop$4$yes$no$what the laptop$i don'know$2$1$2

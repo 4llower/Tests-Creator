@@ -5,18 +5,19 @@ void Test::startApp() {
 	std::cout << "1. Choose the test." << std::endl;
 	std::cout << "2. Create the test." << std::endl;
 	std::cout << "3. Erase the test." << std::endl;
-	std::cout << "4. Exit" << std::endl;
+	std::cout << "4. Change the test" << std::endl;
+	std::cout << "5. Exit" << std::endl;
 	std::cout << "Enter number which you need to execute: ";
 	
 	int result;
-	while ((result = getNumber(1, 4)) == -1) {
+	while ((result = getNumber(1, 5)) == -1) {
 		std::cout << "Please enter the correct number: ";
 	}
 
 	switch (result) {
 		case 1: {
 			system("cls");
-			chooseTest();
+			chooseTest("Start");
 			break;
 		}
 		case 2: {
@@ -26,7 +27,12 @@ void Test::startApp() {
 		}
 		case 3: {
 			system("cls");
-			chooseTestToErase();
+			chooseTest("Delete");
+			break;
+		}
+		case 4: {
+			system("cls");
+			chooseTest("Edit");
 			break;
 		}
 		default: {
@@ -55,51 +61,66 @@ void Test::createTest() {
 	dataTest << numberQuestions << std::endl;
 
 	for (int indexQuestion = 0; indexQuestion < numberQuestions; ++indexQuestion) {
-		TestModel currentQuestion;
-		int numberAnswers;
-		int numberCorrectAnswers;
-
 		std::cout << "Enter the question #" << indexQuestion + 1 << ": ";
-
-		getline(std::cin, currentQuestion.Question);
-		getline(std::cin, currentQuestion.Question);
-
-		std::cout << "Enter the number of answers: ";
-		while ((numberAnswers = getNumber(1, 100)) == -1) {
-			std::cout << "Enter the correct number(1, 100): ";
-		}
-
-		for (int indexAnswer = 0; indexAnswer < numberAnswers; ++indexAnswer) {
-			std::string answer;
-			std::cout << "Enter the " << indexAnswer + 1 << " answer: ";
-			std::cin >> answer;
-			currentQuestion.Answers.push_back(answer);
-		}
-
-		std::cout << "Enter the number of correct answers: ";
-		while ((numberCorrectAnswers = getNumber(1, numberAnswers)) == -1) {
-			std::cout << "Enter the correct number(1," << numberAnswers << "): ";
-		}
-
-		for (int indexCorrectAnswer = 0; indexCorrectAnswer < numberCorrectAnswers; ++indexCorrectAnswer) {
-			int correctAnswer;
-			std::cout << "Enter the index of correct answer: ";
-
-			while ((correctAnswer = getNumber(1, numberAnswers)) == -1) {
-				std::cout << "Enter the correct number(1," << numberAnswers << "): ";
-			}
-			
-			currentQuestion.CorrectAnswers.push_back(correctAnswer);
-		}
-
-		dataTest << encryptQuestionObject(currentQuestion) << std::endl;
+		dataTest << encryptQuestionObject(getTestQuestion()) << std::endl;
 		system("cls");
 	}
 
 	this->startApp();
 }
 
-void Test::chooseTest() {
+void Test::fromObjectToFile(std::string filename, std::vector <TestModel> testData) {
+	std::ofstream output;
+	output.open(filename);
+	
+	output << testData.size() << std::endl;
+	
+	for (auto item : testData) {
+		output << encryptQuestionObject(item) << std::endl;
+	}
+}
+
+TestModel Test::getTestQuestion() {
+	TestModel result;
+	
+	int numberAnswers;
+	int numberCorrectAnswers;
+
+	getline(std::cin, result.Question);
+	getline(std::cin, result.Question);
+
+	std::cout << "Enter the number of answers: ";
+	while ((numberAnswers = getNumber(1, 100)) == -1) {
+		std::cout << "Enter the correct number(1, 100): ";
+	}
+
+	for (int indexAnswer = 0; indexAnswer < numberAnswers; ++indexAnswer) {
+		std::string answer;
+		std::cout << "Enter the " << indexAnswer + 1 << " answer: ";
+		std::cin >> answer;
+		result.Answers.push_back(answer);
+	}
+
+	std::cout << "Enter the number of correct answers: ";
+	while ((numberCorrectAnswers = getNumber(1, numberAnswers)) == -1) {
+		std::cout << "Enter the correct number(1," << numberAnswers << "): ";
+	}
+
+	for (int indexCorrectAnswer = 0; indexCorrectAnswer < numberCorrectAnswers; ++indexCorrectAnswer) {
+		int correctAnswer;
+		std::cout << "Enter the index of correct answer: ";
+
+		while ((correctAnswer = getNumber(1, numberAnswers)) == -1) {
+			std::cout << "Enter the correct number(1," << numberAnswers << "): ";
+		}
+
+		result.CorrectAnswers.push_back(correctAnswer);
+	}
+
+	return result;
+}
+
+void Test::chooseTest(std::string action) {
 	std::vector <std::string> tests = TestData::getTestList();
 
 	int number = 1;
@@ -118,41 +139,26 @@ void Test::chooseTest() {
 	}
 
 	system("cls");
-	startTest(tests[answer - 1]);
-}
 
-void Test::chooseTestToErase() {
-	std::vector <std::string> tests = TestData::getTestList();
-
-	int number = 1;
-
-	for (auto item : tests) {
-		std::cout << number++ << " - " << item << std::endl;
+	if (action == "Start") {
+		startTest(tests[answer - 1]);
+		return;
 	}
 
-
-	std::cout << "Please enter index of test which you need to delete, or enter 0 to back in main menu: " << std::endl;
-
-	int answer;
-
-	while ((answer = getNumber(0, tests.size())) == -1) {
-		std::cout << "Please enter the correct number: ";
-	}
-
-	if (answer == 0) {
-		system("cls");
+	if (action == "Delete") {
+		TestData::eraseTest(tests[answer - 1]);
 		this->startApp();
 		return;
 	}
-	
-	TestData::eraseTest(tests[answer - 1]);
-	system("cls");
-	this->startApp();
+
+	if (action == "Edit") {
+		startEdit(tests[answer - 1]);
+		return;
+	}
 }
 
 void Test::startTest(std::string filename) {
-	testData.clear();
-	getTestData(filename); 
+	std::vector<TestModel> testData = getTestData(filename);
 
 	int resultPoints = 0;
 	int numberQuestion = 0;
@@ -224,8 +230,47 @@ void Test::startTest(std::string filename) {
 	}
 }
 
-void Test::getTestData(std::string filename) {
+void Test::startEdit(std::string filename) {
+	std::vector<TestModel> testData = getTestData(filename);
+	int numberQuestion = 0;
 
+	for (auto item : testData) {
+		std::cout << "Question is " << ++numberQuestion << "/" << testData.size() << std::endl;
+		std::cout << item.Question << std::endl;
+
+		int number = 0;
+		for (auto answer : item.Answers) {
+			std::cout << ++number << " " << answer << std::endl;
+		}
+
+		std::cout << std::endl;
+	}
+
+	std::cout << "Enter the number of question which you need to edit or 0 to exit: ";
+
+	int numberEdit = 0;
+	while ((numberEdit = getNumber(0, testData.size())) == -1) {
+		std::cout << "Enter the correct number(0," << testData.size() << "): ";
+	}
+
+	if (numberEdit == 0) {
+		system("cls");
+		this->startApp();
+		return;
+	}
+
+	std::cout << "Enter the question: ";
+	testData[numberEdit - 1] = getTestQuestion();
+
+	fromObjectToFile(filename, testData);
+	system("cls");
+	this->startApp();
+}
+
+
+std::vector<TestModel> Test::getTestData(std::string filename) {
+
+	std::vector<TestModel> testData;
 	std::string currentQuestionString;
 
 	std::ifstream input;
@@ -241,4 +286,6 @@ void Test::getTestData(std::string filename) {
 	}
 
 	input.close();
+
+	return testData;
 }

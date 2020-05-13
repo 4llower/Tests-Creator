@@ -44,7 +44,6 @@ int Test::getNumber(int leftBorder, int rightBorder) {
 }
 
 TestModel Test::decodeQuestionString(std::string questionString) {
-
 	TestModel result;
 	std::string question, temp;
 	int pos = 0;

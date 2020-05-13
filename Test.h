@@ -10,15 +10,17 @@
 class Test {
 
 private:	
-	std::vector<TestModel> testData;
-	void getTestData(std::string);
+	std::vector<TestModel> getTestData(std::string);
 	TestModel decodeQuestionString(std::string);
 	std::string encryptQuestionObject(TestModel);
 	int getNumber(int, int);
+	TestModel getTestQuestion();
+	void fromObjectToFile(std::string, std::vector<TestModel>);
 public:
 	void createTest();
 	void startApp();
-	void chooseTest();
+	void chooseTest(std::string);
 	void startTest(std::string);
-	void chooseTestToErase();
+	void startEdit(std::string);
 };
+
